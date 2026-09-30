@@ -30,7 +30,7 @@ PROCESSED = ROOT / "data" / "processed"
 COLUMNS = [
     "recording_id", "source", "source_id", "label", "label_rank", "acoustic_class", "secondary_species",
     "call_types", "recordist", "license", "quality", "lat", "lon", "date", "place", "caption",
-    "page_url", "url", "path", "duration_s", "md5", "split_group", "fold",
+    "page_url", "url", "path", "duration_s", "md5", "medium", "split_group", "fold",
 ]
 MIN_SECONDS = 0.2  # herps single-call exemplars are 0.26-0.97 s
 N_FOLDS = 5
@@ -116,6 +116,15 @@ def dedupe(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+UNDERWATER = re.compile(r"underwater|under water|hydrophone", re.I)
+
+
+def medium(df: pd.DataFrame) -> pd.Series:
+    """'underwater' if the call type or caption says so (kept, but reported separately)."""
+    uw = df["call_types"].map(lambda t: "underwater" in t) | df["caption"].fillna("").str.contains(UNDERWATER)
+    return uw.map({True: "underwater", False: "air"})
+
+
 COUNTY = re.compile(r"((?:[A-Z][a-z]+ )*[A-Z][a-z]+) County")
 
 
@@ -161,6 +170,7 @@ def build() -> pd.DataFrame:
     if unknown.any():
         raise ValueError(f"labels not in config: {sorted(df.loc[unknown, 'label'].unique())}")
     df = df.reset_index(drop=True)
+    df["medium"] = medium(df)
     df["split_group"] = split_groups(df)
     df["fold"] = assign_folds(df)
     df = df.reindex(columns=COLUMNS)

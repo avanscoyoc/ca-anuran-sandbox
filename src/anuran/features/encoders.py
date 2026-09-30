@@ -48,6 +48,7 @@ class Perch2:
     sample_rate = 32000
     window_s = 5.0
     dim = 1536
+    batch_size = 16
 
     def __init__(self):
         import kagglehub
@@ -71,6 +72,7 @@ class BirdNET24:
     sample_rate = 48000
     window_s = 3.0
     dim = 1024
+    batch_size = 4  # preserve_all_tensors keeps every intermediate: keep batches small (RAM)
     EMBEDDING_TENSOR = "model/GLOBAL_AVG_POOL/Mean"
 
     def __init__(self, threads: int = 4):

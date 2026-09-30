@@ -29,11 +29,12 @@ def embed_recording(enc, path: str, duration_s: float, hop_s: float) -> dict:
     spans = frame(max(duration_s, len(audio) / enc.sample_rate), enc.window_s, hop_s)
     x = slice_windows(audio, enc.sample_rate, spans)
     embs, scores = [], {}
-    for i in range(0, len(x), BATCH):
-        chunk = x[i: i + BATCH]
+    batch = getattr(enc, "batch_size", BATCH)
+    for i in range(0, len(x), batch):
+        chunk = x[i: i + batch]
         n = len(chunk)
-        if n < BATCH:  # fixed batch shape: avoids re-allocating the model per call
-            chunk = np.concatenate([chunk, np.zeros((BATCH - n, chunk.shape[1]), chunk.dtype)])
+        if n < batch:  # fixed batch shape: avoids re-allocating the model per call
+            chunk = np.concatenate([chunk, np.zeros((batch - n, chunk.shape[1]), chunk.dtype)])
         e, s = enc(chunk)
         embs.append(e[:n])
         for c, v in s.items():

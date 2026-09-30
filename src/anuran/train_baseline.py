@@ -77,6 +77,8 @@ def evaluate(win_scores: pd.DataFrame, lab: pd.DataFrame, man: pd.DataFrame, cla
         "all": np.ones(len(rec), bool),
         "leakage_safe": (rec["source"] == "herps") | (date >= cutoff),
     }
+    if "medium" in rec:  # underwater recordings kept in training, reported separately
+        subsets["air"] = (rec["medium"] == "air").values
     cols = {}
     for name, mask in subsets.items():
         cols[name] = per_class_ap(rec_scores[mask], rec[mask], classes)
