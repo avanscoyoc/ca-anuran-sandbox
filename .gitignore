@@ -7,3 +7,14 @@
 /data/
 __pycache__/
 .env
+
+# never commit audio or derived arrays, wherever they end up
+*.wav
+*.mp3
+*.m4a
+*.flac
+*.npy
+*.npz
+*.parquet
+/background/
+.DS_Store
