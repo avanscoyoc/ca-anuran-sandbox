@@ -4,6 +4,6 @@
 *.egg-info
 
 # data (scraped audio is not redistributable)
-data/
+/data/
 __pycache__/
 .env

@@ -28,6 +28,7 @@ tensorflow = ">=2.20"
 kagglehub = "*"
 birdnet = "*"
 ai-edge-litert = "*"
+jupyter-bioacoustic = "*"
 
 [tasks]
 scrape-herps = "python -m anuran.scrape.herps"
