@@ -1,13 +1,12 @@
 FROM ghcr.io/prefix-dev/pixi:0.44.0
 
-WORKDIR /workspace
-
 RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
-COPY pixi.toml pixi.lock* ./
-RUN pixi install --locked
-# activate the pixi env for any interactive shell opened in the container
-RUN pixi shell-hook -s bash >> /root/.bashrc
 
-COPY . .
+# Code is NOT baked into the image: the repo is bind-mounted at /workspace by
+# devcontainer.json, and the pixi env is installed there by postCreateCommand
+# (it needs pyproject.toml + src/ for the editable `anuran` package).
+# Activate the pixi env for any interactive shell opened in the container.
+RUN echo 'eval "$(pixi shell-hook -s bash --manifest-path /workspace/pixi.toml)"' >> /root/.bashrc
 
+WORKDIR /workspace
 EXPOSE 8888
