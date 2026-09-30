@@ -1,0 +1,7 @@
+# Manual label fixes for californiaherps clips, keyed by mp3 filename.
+# Applied after caption-based labelling; clears needs_review.
+# <file>.mp3: {label: CODE, secondary: [CODE, ...], note: "..."}
+rdraytoniireelasecalls311.mp3: {label: RADR, secondary: [ANBH], note: "red-legged frogs' release calls while clasped by California Toads"}
+pregillaenhancedep606.mp3: {label: PSSI, note: "reviewed: Sierran Treefrog, Alpine Co."}
+pregillalandcallmarin1108.mp3: {label: PSSI, note: "reviewed: Sierran Treefrog, Marin Co."}
+pregillarelease.mp3: {label: PSSI, note: "reviewed: Sierran Treefrog, Alpine Co."}

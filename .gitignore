@@ -2,3 +2,8 @@
 # pixi environments
 .pixi
 *.egg-info
+
+# data (scraped audio is not redistributable)
+data/
+__pycache__/
+.env

@@ -6,6 +6,37 @@ platforms = ["osx-arm64", "linux-64", "linux-aarch64"]
 version = "0.1.0"
 
 [dependencies]
-python = ">=3.14.7,<3.15"
+python = "3.12.*"
 jupyterlab = ">=4.6.4,<5"
 ipykernel = ">=7.4.0,<8"
+# scraping + data
+requests = "*"
+beautifulsoup4 = "*"
+pyyaml = "*"
+pandas = "*"
+pyarrow = "*"
+# audio
+librosa = "*"
+pysoundfile = "*"
+ffmpeg = "*"
+scikit-learn = "*"
+pytest = "*"
+
+[pypi-dependencies]
+anuran = { path = ".", editable = true }
+tensorflow = ">=2.20"
+kagglehub = "*"
+birdnet = "*"
+ai-edge-litert = "*"
+
+[tasks]
+scrape-herps = "python -m anuran.scrape.herps"
+scrape-inat = "python -m anuran.scrape.inat"
+scrape-xc = "python -m anuran.scrape.xenocanto"
+manifest = "python -m anuran.data.manifest"
+inventory = "python -m anuran.data.inventory"
+embed = "python -m anuran.features.embed_audio"
+weak-labels = "python -m anuran.data.window_labels"
+baseline = "python -m anuran.train_baseline"
+export-review = "python -m anuran.data.export_review"
+test = "pytest -q tests"

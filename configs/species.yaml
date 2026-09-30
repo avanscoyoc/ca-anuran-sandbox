@@ -1,0 +1,60 @@
+# California anurans (californiaherps.com/frogs/frogs.html).
+# slug: californiaherps page slug -> frogs/pages/<slug>.sounds.html
+# status: native | non-native | possibly-extirpated
+# vocal: false = no advertisement call; excluded from classifier label space
+# index_audio: clips on frogs/frogscalls.html for species without a sounds page
+# aliases: extra names used in captions, for relabelling cross-species clips
+# inat: verified iNaturalist taxon ids (descendants included). Name search is unsafe:
+#   "Rana pretiosa" resolves to R. luteiventris, "Anaxyrus woodhousii woodhousii" to the A. fowleri complex.
+# acoustic_group: species whose calls can't be told apart; see groups below.
+groups:
+  # iNat lumps P. sierra and P. hypochondriaca into P. regilla (24259), so iNat clips are group-level only
+  - {code: PACH, common: Pacific chorus frog complex, members: [PSRE, PSSI, PSHY], inat: [24259]}
+  # most iNat western toads are identified only to species (A. boreas 64970)
+  - {code: WETO, common: Western toad, members: [ANBB, ANBH], inat: [64970]}
+  - {code: MYLF, common: Mountain yellow-legged frog complex, members: [RASI, RAMU]}
+species:
+  # --- toads ---
+  - {code: ANMI, common: Arizona Toad, scientific: Anaxyrus microscaphus, slug: a.microscaphus, group: toad, status: possibly-extirpated, inat: [64982]}
+  - {code: ANCA, common: Arroyo Toad, scientific: Anaxyrus californicus, slug: a.californicus, group: toad, status: native, inat: [64971]}
+  - {code: ANEX, common: Black Toad, scientific: Anaxyrus exsul, slug: a.exsul, group: toad, status: native, inat: [64976]}
+  - {code: ANBB, common: Boreal Toad, scientific: Anaxyrus boreas boreas, slug: a.b.boreas, group: toad, status: native, inat: [196978], acoustic_group: WETO}
+  - {code: ANBH, common: California Toad, scientific: Anaxyrus boreas halophilus, slug: a.b.halophilus, group: toad, status: native, inat: [196979], acoustic_group: WETO}
+  - {code: ANCO, common: Great Plains Toad, scientific: Anaxyrus cognatus, slug: a.cognatus, group: toad, status: native, inat: [64973]}
+  - {code: ANPU, common: Red-spotted Toad, scientific: Anaxyrus punctatus, slug: a.punctatus, group: toad, status: native, inat: [64984]}
+  - {code: ANWO, common: Rocky Mountain Toad, scientific: Anaxyrus woodhousii woodhousii, slug: a.w.woodhousii, group: toad, status: native, inat: [64989]}
+  - {code: INAL, common: Sonoran Desert Toad, scientific: Incilius alvarius, slug: i.alvarius, group: toad, status: possibly-extirpated,
+     aliases: [Colorado River Toad, Colorado Desert Toad], inat: [65828]}
+  - {code: ANCN, common: Yosemite Toad, scientific: Anaxyrus canorus, slug: a.canorus, group: toad, status: native, inat: [64972]}
+  # --- true frogs ---
+  - {code: RADR, common: California Red-legged Frog, scientific: Rana draytonii, slug: r.draytonii, group: frog, status: native, inat: [67016]}
+  - {code: RACA, common: Cascades Frog, scientific: Rana cascadae, slug: r.cascadae, group: frog, status: native, inat: [25592]}
+  - {code: ASTR, common: Coastal Tailed Frog, scientific: Ascaphus truei, slug: a.truei, group: frog, status: native, vocal: false}
+  - {code: RALU, common: Columbia Spotted Frog, scientific: Rana luteiventris, slug: r.luteiventris, group: frog, status: native, inat: [25588]}
+  - {code: RABO, common: Foothill Yellow-legged Frog, scientific: Rana boylii, slug: r.boylii, group: frog, status: native, inat: [25646]}
+  - {code: LIYA, common: Lowland Leopard Frog, scientific: Lithobates yavapaiensis, slug: l.yavapaiensis, group: frog, status: possibly-extirpated, inat: [66020]}
+  - {code: RASI, common: Mountain Yellow-legged Frog, scientific: Rana sierrae, slug: r.sierrae, group: frog, status: native,
+     aliases: [Sierra Nevada Yellow-legged Frog], inat: [67022], acoustic_group: MYLF}
+  - {code: LIPI, common: Northern Leopard Frog, scientific: Lithobates pipiens, slug: l.pipiens, group: frog, status: non-native, inat: [66003]}  # natives possibly extirpated
+  - {code: RAAU, common: Northern Red-legged Frog, scientific: Rana aurora, slug: r.aurora, group: frog, status: native, inat: [25545]}
+  - {code: RAPR, common: Oregon Spotted Frog, scientific: Rana pretiosa, slug: r.pretiosa, group: frog, status: native, inat: [25542]}
+  - {code: RAMU, common: Southern Mountain Yellow-legged Frog, scientific: Rana muscosa, slug: r.muscosa, group: frog, status: native,
+     index_audio: [/sounds/rmuscosashort.mp3], inat: [25637], acoustic_group: MYLF}
+  # --- treefrogs ---
+  - {code: PSHY, common: Baja California Treefrog, scientific: Pseudacris hypochondriaca, slug: p.hypochondriaca, group: treefrog, status: native, acoustic_group: PACH}
+  - {code: PSCA, common: California Treefrog, scientific: Pseudacris cadaverina, slug: p.cadaverina, group: treefrog, status: native, inat: [24254]}
+  - {code: PSRE, common: Northern Pacific Treefrog, scientific: Pseudacris regilla, slug: p.regilla, group: treefrog, status: native,
+     aliases: [Pacific Treefrog, Pacific Tree Frog, Pacific Chorus Frog], acoustic_group: PACH}
+  - {code: PSSI, common: Sierran Treefrog, scientific: Pseudacris sierra, slug: p.sierra, group: treefrog, status: native, acoustic_group: PACH}
+  # --- spadefoots ---
+  - {code: SCCO, common: Couch's Spadefoot, scientific: Scaphiopus couchii, slug: s.couchii, group: spadefoot, status: native, inat: [26691]}
+  - {code: SPIN, common: Great Basin Spadefoot, scientific: Spea intermontana, slug: s.intermontana, group: spadefoot, status: native, inat: [26704]}
+  - {code: SPHA, common: Western Spadefoot, scientific: Spea hammondii, slug: s.hammondii, group: spadefoot, status: native, inat: [26702]}
+  # --- non-native ---
+  - {code: XELA, common: African Clawed Frog, scientific: Xenopus laevis, slug: x.laevis, group: non-native, status: non-native, inat: [25457]}
+  - {code: LICA, common: American Bullfrog, scientific: Lithobates catesbeianus, slug: l.catesbeianus, group: non-native, status: non-native, inat: [65979]}
+  - {code: ELCO, common: Common Coqui, scientific: Eleutherodactylus coqui, slug: e.coqui, group: non-native, status: non-native,
+     index_audio: [/sounds/coquicallspuertorico1114.mp3], inat: [22454]}
+  - {code: LIBE, common: Rio Grande Leopard Frog, scientific: Lithobates berlandieri, slug: l.berlandieri, group: non-native, status: non-native, inat: [65975]}
+  - {code: LISP, common: Southern Leopard Frog, scientific: Lithobates sphenocephalus, slug: l.sphenocephalus, group: non-native, status: non-native,
+     index_audio: [http://www.californiaherps.com/sounds/rsphenocephala.mp3], inat: [60341]}
