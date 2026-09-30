@@ -1,0 +1,11 @@
+[workspace]
+authors = ["avanscoyoc <amy.e.van.scoyoc@gmail.com>"]
+channels = ["conda-forge"]
+name = "ca-anuran-sandbox"
+platforms = ["osx-arm64", "linux-64", "linux-aarch64"]
+version = "0.1.0"
+
+[dependencies]
+python = ">=3.14.7,<3.15"
+jupyterlab = ">=4.6.4,<5"
+ipykernel = ">=7.4.0,<8"

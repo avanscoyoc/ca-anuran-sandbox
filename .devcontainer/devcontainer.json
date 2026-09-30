@@ -1,0 +1,23 @@
+{
+  "name": "ca-anuran-sandbox",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "workspaceFolder": "/workspace",
+  "forwardPorts": [8888],
+  "remoteUser": "root",
+  "postCreateCommand": "pixi install --locked",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-toolsai.jupyter"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/workspace/.pixi/envs/default/bin/python"
+      }
+    }
+  }
+}
