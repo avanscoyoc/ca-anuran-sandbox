@@ -6,7 +6,7 @@ _Last updated: 2026-10-01. Tick items off and date them as they're done._
 **Use case** (user): presence per site/night, plus screening clips for human review. Scores on focal recordings only matter as far as they predict that.
 
 ## Where we left off (2026-10-01, ~01:20 UTC)
-- Started in the background: E0 → E2 → learning curve (logs: `data/results/e0_e2.log`, `data/results/learning_curve.log`). Expected to finish by ~03:00 UTC if the container stayed up.
+- ~~Started in the background: E0 → E2 → learning curve~~ All three finished 2026-10-01 (logs: `data/results/e0_e2.log`, `data/results/learning_curve.log`). Expected to finish by ~03:00 UTC if the container stayed up.
 - **Next session:**
   1. Check whether `data/results/runs/e0_focal_bg/`, `data/results/runs/e2_focal_cdfw_bg/` and `data/results/learning_curve/summary.md` exist. If not, re-run (the runs aren't resumable):
      - `pixi run experiment configs/experiments/e0_focal_bg.yaml configs/experiments/e2_focal_cdfw_bg.yaml`
@@ -52,14 +52,14 @@ Change one thing at a time; each experiment builds on the last adopted model.
 ## Experiment queue
 | ID | Config / command | Question | Status |
 |---|---|---|---|
-| E0 | `e0_focal_bg.yaml` | Does the current MLP head reproduce through the harness? (Tier A ≈ 0.64) | 2026-10-01 |
-| E1 | E0's Tier B numbers | Honest ARU baseline; does the head see CDFW frogs as frogs (domain-shortcut test)? | 2026-10-01 |
-| E2 | `e2_focal_cdfw_bg.yaml` | How much does adding CDFW clips to training help on ARU, and does it hurt focal? | 2026-10-01 |
-| LC | `pixi run learning-curve configs/experiments/e0_focal_bg.yaml` | How many ARU clips/sites per species? (→ [aru_data_needs.md](aru_data_needs.md)) | running |
+| E0 | `e0_focal_bg.yaml` | Does the current MLP head reproduce through the harness? (Tier A ≈ 0.64) | done 2026-10-01: 0.652 [0.619, 0.714] |
+| E1 | E0's Tier B numbers | Honest ARU baseline; does the head see CDFW frogs as frogs (domain-shortcut test)? | done: ranks well (AP 0.88), but recall at 0.5 is only 7–47% for 3 of 4 species → domain shift |
+| E2 | `e2_focal_cdfw_bg.yaml` | How much does adding CDFW clips to training help on ARU, and does it hurt focal? | done: **ADOPTED**, ARU AP +0.116; focal unchanged; likely optimistic (proxy groups) |
+| LC | `pixi run learning-curve configs/experiments/e0_focal_bg.yaml` | How many ARU clips/sites per species? (→ [aru_data_needs.md](aru_data_needs.md)) | done: plateau ~25 clips from ≥3 blocks (AP 0.846 → 0.986) |
 | E3 | (to build) mix focal calls into ARU background (SNR −5…15 dB, EQ, gain), re-embed | Can augmentation replace ARU data? Test leave-species-out: train without that species' CDFW clips, score its CDFW clips | |
 | E4 | (to build) hard-negative mining from background and confusable pairs | Fewer false positives per hour, fewer cross-species hits? | |
 | E5 | Perch v2 (finish embeddings), concat, `model.type: logreg` | Best encoder and head | |
-| E6 | Text ladder: review attributes → auxiliary attribute loss (`Head.attr`) → measured acoustic features (pulse rate, duration, band, slope) → attribute zero-shot for ANMI/ANEX/RALU/RAPR | Do field-guide descriptions help rare and confusable classes? Judge on `A_macro_ap_rare` (leakage-safe) and Tier B | |
+| E6 | Text ladder: ~~review attributes~~ (approved 2026-10-01) → auxiliary attribute loss (`Head.attr`) → measured acoustic features (pulse rate, duration, band, slope) → attribute zero-shot for ANMI/ANEX/RALU/RAPR | Do field-guide descriptions help rare and confusable classes? Judge on `A_macro_ap_rare` (leakage-safe) and Tier B | |
 | E7 | Post-hoc range/season prior from site location | Better site-level precision (report with and without) | |
 | Final | Adopted stack, evaluated once on Tier C with frozen thresholds | Reported numbers | |
 

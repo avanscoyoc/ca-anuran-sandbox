@@ -26,37 +26,39 @@ The user confirmed these labels are correct (2026-10-01). Nobody yet knows wheth
 
 Background sample rates: 585 at 48 kHz, 54 at 32 kHz, and 6 at 24 kHz. The 24 kHz clips are dropped by `MIN_SR`.
 
-## Recordings per acoustic class × source (manifest)
-| Class | herps | inat | xc | Total | Underwater | Note |
-|---|---|---|---|---|---|---|
-| ANMI Arizona Toad | 4 | 0 | 0 | 4 | | possibly extirpated in CA |
-| ANEX Black Toad | 6 | 0 | 0 | 6 | | single site → not evaluable |
-| ANCN Yosemite Toad | 5 | 2 | 0 | 7 | | |
-| RALU Columbia Spotted Frog | 7 | 0 | 0 | 7 | 2 | single site → not evaluable |
-| INAL Sonoran Desert Toad | 3 | 4 | 0 | 7 | | possibly extirpated |
-| RAPR Oregon Spotted Frog | 7 | 1 | 0 | 8 | 1 | |
-| ANCA Arroyo Toad | 5 | 4 | 0 | 9 | | |
-| RACA Cascades Frog | 10 | 0 | 0 | 10 | | |
-| MYLF Mountain yellow-legged complex | 10 | 0 | 0 | 10 | 3 | RASI 9 + RAMU 1 |
-| XELA African Clawed Frog | 6 | 1 | 3 | 10 | 6 | calls underwater |
-| LIYA Lowland Leopard Frog | 7 | 4 | 0 | 11 | | possibly extirpated |
-| RABO Foothill Yellow-legged Frog | 10 | 4 | 0 | 14 | 9 | +436 CDFW clips |
-| RADR California Red-legged Frog | 10 | 7 | 0 | 17 | | |
-| RAAU Northern Red-legged Frog | 13 | 16 | 0 | 29 | 4 | |
-| SPHA Western Spadefoot | 8 | 31 | 0 | 39 | | |
-| SPIN Great Basin Spadefoot | 5 | 46 | 0 | 51 | | |
-| ANPU Red-spotted Toad | 9 | 44 | 1 | 54 | | |
-| WETO Western toad (ANBB+ANBH) | 21 | 36 | 0 | 57 | | |
-| PSCA California Treefrog | 7 | 58 | 0 | 65 | | |
-| ANCO Great Plains Toad | 8 | 55 | 2 | 65 | | |
-| SCCO Couch's Spadefoot | 6 | 145 | 2 | 153 | | |
-| ANWO Rocky Mountain Toad | 9 | 151 | 1 | 161 | | +638 CDFW clips |
-| ELCO Common Coqui | 1 | 246 | 2 | 249 | | non-native |
-| LICA American Bullfrog | 11 | 246 | 0 | 257 | | non-native; +421 CDFW clips |
-| LIBE Rio Grande Leopard Frog | 6 | 263 | 3 | 272 | | non-native |
-| LISP Southern Leopard Frog | 1 | 282 | 4 | 287 | | non-native |
-| PACH Pacific chorus complex | 32 | 237 | 26 | 295 | | +795 CDFW clips |
-| LIPI Northern Leopard Frog | 9 | 321 | 0 | 330 | | non-native in CA |
+## Recordings and call attributes per acoustic class
+Counts are from the manifest. Attributes come from the Cal Herps descriptions (`configs/attribute_review.yaml`), **all approved by the user 2026-10-01**. Blank = the text doesn't say. ELCO and LISP have no description text. Structure labels name the literal words matched: `snore_rattle` = "snore"/"rattle", `peep_plink`, `chuckle_cluck`, `croak_quack_ribit`, `bleat_groan_growl`, `drone_bellow`, `click_knock`, `series_of` = "a series of …".
+
+| Class | herps | inat | xc | cdfw (ARU) | Focal total | Underwater recs | Pitch | Loudness | Call duration (s) | Notes/s | Structure | Rising pitch | Calls underwater (text) | Note |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| ANMI Arizona Toad | 4 | 0 | 0 |  | 4 |  | high | loud | 5.7 |  | trill | yes |  | possibly extirpated |
+| ANEX Black Toad | 6 | 0 | 0 |  | 6 |  | high | quiet |  |  | peep_plink |  |  | single site → not evaluable |
+| ANCN Yosemite Toad | 5 | 2 | 0 |  | 7 |  |  | loud |  |  | trill |  |  |  |
+| RALU Columbia Spotted Frog | 7 | 0 | 0 |  | 7 | 2 |  | quiet |  |  | series_of, click_knock, grunt |  | yes | single site → not evaluable |
+| INAL Sonoran Desert Toad | 3 | 4 | 0 |  | 7 |  | low | quiet | 0.5–1 |  | whistle |  |  | possibly extirpated |
+| RAPR Oregon Spotted Frog | 7 | 1 | 0 |  | 8 | 1 | low | quiet |  |  | series_of, click_knock |  | yes |  |
+| ANCA Arroyo Toad | 5 | 4 | 0 |  | 9 |  |  |  | 10 |  | trill | yes |  |  |
+| RACA Cascades Frog | 10 | 0 | 0 |  | 10 |  |  | quiet |  |  | series_of, chuckle_cluck |  | yes |  |
+| MYLF Mountain yellow-legged frog complex | 10 | 0 | 0 |  | 10 | 3 |  | quiet |  |  |  | yes | yes | RASI 9 + RAMU 1; text from RASI page only |
+| XELA African Clawed Frog | 6 | 1 | 3 |  | 10 | 6 |  | quiet | 0.5 |  | trill |  | yes | calls underwater; non-native |
+| LIYA Lowland Leopard Frog | 7 | 4 | 0 |  | 11 |  |  | quiet |  |  | chuckle_cluck |  |  | possibly extirpated |
+| RABO Foothill Yellow-legged Frog | 10 | 4 | 0 | 436 | 14 | 9 | low | quiet |  | 4–6 | series_of, snore_rattle, grunt |  | yes |  |
+| RADR California Red-legged Frog | 10 | 7 | 0 |  | 17 |  |  | quiet | 1–3 |  | series_of, bleat_groan_growl |  | yes |  |
+| RAAU Northern Red-legged Frog | 13 | 16 | 0 |  | 29 | 4 |  | quiet | 1–3 |  | series_of |  | yes |  |
+| SPHA Western Spadefoot | 8 | 31 | 0 |  | 39 |  |  | loud | ≤1 |  | trill, snore_rattle |  |  |  |
+| SPIN Great Basin Spadefoot | 5 | 46 | 0 |  | 51 |  |  | loud |  |  | snore_rattle |  |  |  |
+| ANPU Red-spotted Toad | 9 | 44 | 1 |  | 54 |  | high | loud | ≤10 |  | trill |  |  |  |
+| WETO Western toad | 21 | 36 | 0 |  | 57 |  | high | quiet |  |  | peep_plink |  |  | ANBB + ANBH |
+| PSCA California Treefrog | 7 | 58 | 0 |  | 65 |  | low | loud |  |  | trill, croak_quack_ribit |  |  |  |
+| ANCO Great Plains Toad | 8 | 55 | 2 |  | 65 |  |  | loud | 5–60 |  | trill |  |  |  |
+| SCCO Couch's Spadefoot | 6 | 145 | 2 |  | 153 |  |  | loud |  |  | bleat_groan_growl | no |  |  |
+| ANWO Rocky Mountain Toad | 9 | 151 | 1 | 638 | 161 |  |  | loud | 1–4 |  | snore_rattle, bleat_groan_growl |  |  |  |
+| ELCO Common Coqui | 1 | 246 | 2 |  | 249 |  |  |  |  |  |  |  |  | non-native |
+| LICA American Bullfrog | 11 | 246 | 0 | 421 | 257 |  | low | loud |  |  | drone_bellow |  |  | non-native |
+| LIBE Rio Grande Leopard Frog | 6 | 263 | 3 |  | 272 |  | low | loud |  |  | trill, snore_rattle, chuckle_cluck |  |  | non-native |
+| LISP Southern Leopard Frog | 1 | 282 | 4 |  | 287 |  |  |  |  |  |  |  |  | non-native |
+| PACH Pacific chorus frog complex | 32 | 237 | 26 | 795 | 295 |  |  | loud |  |  | croak_quack_ribit | yes |  | PSRE/PSSI/PSHY |
+| LIPI Northern Leopard Frog | 9 | 321 | 0 |  | 330 |  |  | moderate |  |  | snore_rattle, croak_quack_ribit, chuckle_cluck |  |  | non-native in CA |
 
 **Weak window labels** (BirdNET, 3 s windows): 19,068 `pos` and 20,061 `uncertain`.
 

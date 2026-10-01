@@ -1,0 +1,292 @@
+# Human-approved call attributes (values only; evidence quotes stay in the gitignored
+# data/interim/call_attributes.yaml). text/attributes.py marks a class reviewed only while
+# its extracted values equal these.
+reviewer: avanscoyoc
+date: '2026-10-01'
+note: Approved all extracted call attributes as-is. ELCO and LISP have no description text (all null).
+classes:
+  ANCA:
+    pitch: null
+    loudness: null
+    duration_s:
+    - 10.0
+    - 10.0
+    notes_per_s: null
+    structure:
+    - trill
+    rising_pitch: true
+    underwater: null
+  ANCN:
+    pitch: null
+    loudness: loud
+    duration_s: null
+    notes_per_s: null
+    structure:
+    - trill
+    rising_pitch: null
+    underwater: null
+  ANCO:
+    pitch: null
+    loudness: loud
+    duration_s:
+    - 5.0
+    - 60.0
+    notes_per_s: null
+    structure:
+    - trill
+    rising_pitch: null
+    underwater: null
+  ANEX:
+    pitch: high
+    loudness: quiet
+    duration_s: null
+    notes_per_s: null
+    structure:
+    - peep_plink
+    rising_pitch: null
+    underwater: null
+  ANMI:
+    pitch: high
+    loudness: loud
+    duration_s:
+    - 5.7
+    - 5.7
+    notes_per_s: null
+    structure:
+    - trill
+    rising_pitch: true
+    underwater: null
+  ANPU:
+    pitch: high
+    loudness: loud
+    duration_s:
+    - null
+    - 10.0
+    notes_per_s: null
+    structure:
+    - trill
+    rising_pitch: null
+    underwater: null
+  ANWO:
+    pitch: null
+    loudness: loud
+    duration_s:
+    - 1.0
+    - 4.0
+    notes_per_s: null
+    structure:
+    - snore_rattle
+    - bleat_groan_growl
+    rising_pitch: null
+    underwater: null
+  ELCO:
+    pitch: null
+    loudness: null
+    duration_s: null
+    notes_per_s: null
+    structure: null
+    rising_pitch: null
+    underwater: null
+  INAL:
+    pitch: low
+    loudness: quiet
+    duration_s:
+    - 0.5
+    - 1.0
+    notes_per_s: null
+    structure:
+    - whistle
+    rising_pitch: null
+    underwater: null
+  LIBE:
+    pitch: low
+    loudness: loud
+    duration_s: null
+    notes_per_s: null
+    structure:
+    - trill
+    - snore_rattle
+    - chuckle_cluck
+    rising_pitch: null
+    underwater: null
+  LICA:
+    pitch: low
+    loudness: loud
+    duration_s: null
+    notes_per_s: null
+    structure:
+    - drone_bellow
+    rising_pitch: null
+    underwater: null
+  LIPI:
+    pitch: null
+    loudness: moderate
+    duration_s: null
+    notes_per_s: null
+    structure:
+    - snore_rattle
+    - croak_quack_ribit
+    - chuckle_cluck
+    rising_pitch: null
+    underwater: null
+  LISP:
+    pitch: null
+    loudness: null
+    duration_s: null
+    notes_per_s: null
+    structure: null
+    rising_pitch: null
+    underwater: null
+  LIYA:
+    pitch: null
+    loudness: quiet
+    duration_s: null
+    notes_per_s: null
+    structure:
+    - chuckle_cluck
+    rising_pitch: null
+    underwater: null
+  MYLF:
+    pitch: null
+    loudness: quiet
+    duration_s: null
+    notes_per_s: null
+    structure: null
+    rising_pitch: true
+    underwater: true
+  PACH:
+    pitch: null
+    loudness: loud
+    duration_s: null
+    notes_per_s: null
+    structure:
+    - croak_quack_ribit
+    rising_pitch: true
+    underwater: null
+  PSCA:
+    pitch: low
+    loudness: loud
+    duration_s: null
+    notes_per_s: null
+    structure:
+    - trill
+    - croak_quack_ribit
+    rising_pitch: null
+    underwater: null
+  RAAU:
+    pitch: null
+    loudness: quiet
+    duration_s:
+    - 1.0
+    - 3.0
+    notes_per_s: null
+    structure:
+    - series_of
+    rising_pitch: null
+    underwater: true
+  RABO:
+    pitch: low
+    loudness: quiet
+    duration_s: null
+    notes_per_s:
+    - 4.0
+    - 6.0
+    structure:
+    - series_of
+    - snore_rattle
+    - grunt
+    rising_pitch: null
+    underwater: true
+  RACA:
+    pitch: null
+    loudness: quiet
+    duration_s: null
+    notes_per_s: null
+    structure:
+    - series_of
+    - chuckle_cluck
+    rising_pitch: null
+    underwater: true
+  RADR:
+    pitch: null
+    loudness: quiet
+    duration_s:
+    - 1.0
+    - 3.0
+    notes_per_s: null
+    structure:
+    - series_of
+    - bleat_groan_growl
+    rising_pitch: null
+    underwater: true
+  RALU:
+    pitch: null
+    loudness: quiet
+    duration_s: null
+    notes_per_s: null
+    structure:
+    - series_of
+    - click_knock
+    - grunt
+    rising_pitch: null
+    underwater: true
+  RAPR:
+    pitch: low
+    loudness: quiet
+    duration_s: null
+    notes_per_s: null
+    structure:
+    - series_of
+    - click_knock
+    rising_pitch: null
+    underwater: true
+  SCCO:
+    pitch: null
+    loudness: loud
+    duration_s: null
+    notes_per_s: null
+    structure:
+    - bleat_groan_growl
+    rising_pitch: false
+    underwater: null
+  SPHA:
+    pitch: null
+    loudness: loud
+    duration_s:
+    - null
+    - 1.0
+    notes_per_s: null
+    structure:
+    - trill
+    - snore_rattle
+    rising_pitch: null
+    underwater: null
+  SPIN:
+    pitch: null
+    loudness: loud
+    duration_s: null
+    notes_per_s: null
+    structure:
+    - snore_rattle
+    rising_pitch: null
+    underwater: null
+  WETO:
+    pitch: high
+    loudness: quiet
+    duration_s: null
+    notes_per_s: null
+    structure:
+    - peep_plink
+    rising_pitch: null
+    underwater: null
+  XELA:
+    pitch: null
+    loudness: quiet
+    duration_s:
+    - 0.5
+    - 0.5
+    notes_per_s: null
+    structure:
+    - trill
+    rising_pitch: null
+    underwater: true

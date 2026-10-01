@@ -21,7 +21,16 @@ Clips from the same recorder and night are near-duplicates: same noise floor, sa
 - **The measured answer** comes from `pixi run learning-curve`: AP vs number of ARU clips and proxy sites for ANWO/LICA/PACH/RABO, in `data/results/learning_curve/summary.md`. Where the curve flattens becomes the target for the other species. Record the result here when it's done.
 
 ## Learning-curve result (2026-10-01, proxy-grouped)
-_(fill in after the run: plateau clip count, gain from 1 → 3 → all groups)_
+5 test folds × 2 repeats, ARU pool = CDFW clips + background, macro over ANWO/LICA/PACH/RABO:
+- **0 ARU clips:** AP 0.846, recall at precision 0.9 = 0.64. RABO is worst at 0.645.
+- **5 clips from 1 block:** AP 0.964, recall at P0.9 = 0.89. RABO jumps to 1.00.
+- **25 clips from 3 blocks:** AP 0.986, recall at P0.9 = 0.97. This is about the plateau.
+- **All clips from all blocks:** AP 0.995, recall at P0.9 = 0.99.
+- **Spreading clips across blocks helps a little:** 25 clips from 1 → 3 blocks gives 0.978 → 0.986, recall 0.95 → 0.97.
+
+**Reading:** for these species, a few dozen ARU clips from ≥ 3 groups get nearly all of the gain. The gain is mostly calibration to ARU audio, not learning the species.
+
+**Caveat:** these are proxy blocks, not real sites, and the test pool holds only 4 species, so the plateau is likely reached sooner here than it would be at new sites. **Working target stays at 50–100 clips from ≥ 5 site-nights per species**, with ~25 clips from 3+ sites as the minimum useful amount.
 
 ## Species priority for new ARU data
 
@@ -41,3 +50,16 @@ _(fill in after the run: plateau clip count, gain from 1 → 3 → all groups)_
 - [ ] How the clips were chosen (detector output? manual browsing?). This tells us how biased a test set they are.
 - [ ] Recorder model and sample rate per deployment. RABO clips are 32 kHz and everything else is 48 kHz; is that a different recorder model or different settings?
 - [ ] Which species were *checked for and absent* at each site (true absences).
+
+## Class separability (2026-10-01)
+Figure: `data/results/figures/tsne_by_class.png`; table: `data/results/figures/separability.csv`.
+- **Purity:** for each species' recordings, the share of their 10 nearest neighbours that are the same class. Measured in the 1024-d BirdNET space, counting only neighbours from other recordists/sites.
+  - Least separable: LIYA, RALU, ANEX, ANMI (0.00); MYLF 0.08; RAPR 0.10; ANCA 0.17; XELA 0.18; RABO 0.20; ANCN, RADR 0.21.
+  - Mid-range confusions: SPIN↔SPHA (0.33/0.43), RAAU↔RADR (0.34/0.21), LIBE↔LISP (0.47/0.51).
+  - Best separated: ELCO 0.94, SCCO 0.82, PACH 0.81, LIPI 0.78.
+  - Caveat: classes with fewer than ~10 recordings score low partly because few same-class neighbours exist from other sites.
+- **ARU clips sit apart from focal clips.** The CDFW clips form their own clusters, away from the same species' focal recordings, for all 4 species. This is the domain shift, made visible. It is why ARU clips per species matter more than more focal data.
+- **Resulting data priority:**
+  1. Natives that are both rare and poorly separated: RADR/RAAU, MYLF (vs RABO), ANCA, RACA, ANCN, RAPR/RALU.
+  2. The confusable spadefoots SPHA/SPIN.
+  3. Non-native LIBE/LISP, lower management priority.
