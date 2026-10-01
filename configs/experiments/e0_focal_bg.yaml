@@ -1,0 +1,16 @@
+# E0/E1: the current MLP head (focal recordings + ARU background) run through the harness.
+# Tier A reproduces the old train_head result (modulo locked units); Tier B is the honest
+# ARU baseline / domain-shortcut test (no CDFW clips in training).
+name: e0_focal_bg
+encoder: birdnet_v24
+seeds: [0, 1, 2]
+train:
+  sources: [herps, inat, xc]
+  background: true
+model:
+  type: mlp
+  epochs: 30
+  d_proj: 256
+  dropout: 0.2
+  lr: 0.001
+  weight_decay: 0.0001

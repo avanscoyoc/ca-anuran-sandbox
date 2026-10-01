@@ -1,6 +1,6 @@
 """Merge all sources into one clean manifest with recordist-grouped CV folds.
 
-  data/interim/{herps,inat,xc}_recordings.parquet -> data/processed/manifest.parquet
+  data/interim/{herps,inat,xc,cdfw}_recordings.parquet -> data/processed/manifest.parquet
 
 Cleaning:
   - every file is fully decoded with ffmpeg; unreadable or <0.2 s files are dropped
@@ -9,6 +9,9 @@ Cleaning:
 Folds: StratifiedGroupKFold on acoustic_class. iNat/XC are grouped by recordist.
 californiaherps is almost all one recordist, so it is grouped by species + county
 (short sonogram clips are excerpts of longer recordings from the same site).
+CDFW ARU clips (data/cdfw.py) are grouped by proxy block and get fold -1 here: their
+folds and the locked test set are assigned with the other ARU data in eval/splits.py, so
+adding them leaves the focal folds unchanged.
 """
 
 from __future__ import annotations
@@ -25,7 +28,8 @@ from sklearn.model_selection import StratifiedGroupKFold
 
 from anuran.config import INTERIM, ROOT, acoustic_group
 
-SOURCES = ["herps", "xc", "inat"]  # dedupe keeps the earliest source
+SOURCES = ["herps", "xc", "inat", "cdfw"]  # dedupe keeps the earliest source
+FOCAL = ["herps", "xc", "inat"]  # handheld/focal recordings; cdfw = ARU clips
 PROCESSED = ROOT / "data" / "processed"
 COLUMNS = [
     "recording_id", "source", "source_id", "label", "label_rank", "acoustic_class", "secondary_species",
@@ -141,7 +145,11 @@ def split_groups(df: pd.DataFrame) -> pd.Series:
         return "unknown"  # whole species page becomes one group
 
     session = "herps:" + df["label"] + ":" + df.apply(county, axis=1)
-    return session.where(df["source"] == "herps", person)
+    out = session.where(df["source"] == "herps", person)
+    if "block" in df:
+        aru = df["source"] == "cdfw"
+        out[aru] = "cdfw:" + df.loc[aru, "label"] + ":b" + df.loc[aru, "block"].astype(int).astype(str).str.zfill(2)
+    return out
 
 
 def assign_folds(df: pd.DataFrame, n_folds: int = N_FOLDS, seed: int = 0) -> pd.Series:
@@ -172,7 +180,9 @@ def build() -> pd.DataFrame:
     df = df.reset_index(drop=True)
     df["medium"] = medium(df)
     df["split_group"] = split_groups(df)
-    df["fold"] = assign_folds(df)
+    focal = df["source"].isin(FOCAL)
+    df["fold"] = -1
+    df.loc[focal, "fold"] = assign_folds(df[focal])
     df = df.reindex(columns=COLUMNS)
     PROCESSED.mkdir(parents=True, exist_ok=True)
     df.to_parquet(PROCESSED / "manifest.parquet", index=False)

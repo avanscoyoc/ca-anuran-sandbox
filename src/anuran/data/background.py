@@ -1,6 +1,6 @@
 """Verified frog-free background clips -> negative windows for the detector head.
 
-Keeps clips in data/raw/background/ that labels/background_verification.csv marks
+Keeps clips in data/raw/background_aru/ that labels/background_verification.csv marks
 frog_present == False (last answer wins), drops clips below MIN_SR (BirdNET uses up to
 15 kHz, so 32 and 48 kHz clips look alike; lower rates would be a shortcut), and assigns
 folds stratified by category (clips have no site info, so this split is looser than
@@ -23,7 +23,7 @@ from sklearn.model_selection import StratifiedKFold
 from anuran.config import RAW, ROOT
 from anuran.data.manifest import N_FOLDS, PROCESSED
 
-BG_DIR = RAW / "background"
+BG_DIR = RAW / "background_aru"
 VERIFICATION = ROOT / "labels" / "background_verification.csv"
 MIN_SR = 32000
 

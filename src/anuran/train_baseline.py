@@ -23,20 +23,26 @@ from sklearn.metrics import average_precision_score
 from sklearn.preprocessing import StandardScaler
 
 from anuran.config import ROOT, load_groups, vocal_species
-from anuran.data.manifest import PROCESSED
+from anuran.data.manifest import FOCAL, PROCESSED
 from anuran.features.encoders import TRAINING_CUTOFF
 
 RESULTS = ROOT / "data" / "results"
 RARE_MAX = 30  # classes with fewer recordings count as rare
 
 
-def load(encoder: str):
+def load(encoder: str, sources: list[str] | None = FOCAL):
+    """Embeddings + window tables, restricted to `sources` (default: focal recordings;
+    the ARU clips have their own folds, see eval/splits.py). None = everything."""
     d = PROCESSED / "embeddings" / encoder
     X = np.load(d / "embeddings.npy").astype(np.float32)
     win = pd.read_parquet(d / "windows.parquet")
     lab = pd.read_parquet(d / "window_labels.parquet")
     assert len(X) == len(win) == len(lab) and (win["recording_id"].values == lab["recording_id"].values).all()
     man = pd.read_parquet(PROCESSED / "manifest.parquet").set_index("recording_id")
+    if sources is not None:
+        keep = lab["recording_id"].map(man["source"]).isin(sources).values
+        X, win, lab = X[keep], win[keep].reset_index(drop=True), lab[keep].reset_index(drop=True)
+        man = man[man["source"].isin(sources)]
     return X, win, lab, man
 
 
