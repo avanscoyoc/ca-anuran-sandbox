@@ -1,0 +1,16 @@
+name: xc
+kind: focal
+raw_dir: data/raw/focal/xc
+description: xeno-canto anuran recordings, quality A/B only.
+citation: xeno-canto contributors
+url: https://xeno-canto.org
+license: CC (per recording)
+redistributable: per recording
+recorder: handheld / various
+reader: manifest
+reader_args: {source: xc, site_from: latlon}
+label_kind: weak
+exhaustive: false
+grouping: recordist (xc:<recordist>)
+caveats:
+  - Only 44 recordings; "also" species become secondary_species (masked, not negatives).

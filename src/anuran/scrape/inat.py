@@ -7,7 +7,7 @@ Species/subspecies taxa are queried before group taxa (e.g. P. regilla s.l.), so
 observation identified finer than the group keeps its finer label.
 
 Outputs:
-  data/raw/inat/audio/<label>/<sound_id>.<ext>
+  data/raw/focal/inat/audio/<label>/<sound_id>.<ext>
   data/interim/inat_recordings.parquet
 """
 
@@ -19,7 +19,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from anuran.config import INTERIM, RAW, ROOT, load_groups, vocal_species
+from anuran.config import FOCAL_RAW, INTERIM, ROOT, load_groups, vocal_species
 from anuran.scrape.fetch import Fetcher
 
 API = "https://api.inaturalist.org/v1/observations"
@@ -94,7 +94,7 @@ def scrape(limit: int, delay: float, download: bool = True, recent_limit: int = 
     df = pd.DataFrame(rows)
     paths = []
     for r in df.itertuples():
-        dest = RAW / "inat" / "audio" / r.label / f"{r.recording_id.removeprefix('inat_')}{r.ext}"
+        dest = FOCAL_RAW / "inat" / "audio" / r.label / f"{r.recording_id.removeprefix('inat_')}{r.ext}"
         ok = fetch.file(r.url, dest) if download else dest.exists()
         paths.append(str(dest.relative_to(ROOT)) if ok else None)
     df["path"] = paths

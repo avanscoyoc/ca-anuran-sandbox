@@ -1,11 +1,11 @@
 """Evaluation metrics on unit-level scores, with group-bootstrap confidence intervals.
 
-Units are recordings (focal), clips (CDFW, background). A unit's score for a class is
-the max over its windows. Tier A = focal dev units; Tier B = ARU dev units (CDFW clips
+Units are recordings (focal), clips (non-avian-ml frog and background). A unit's score for a class is
+the max over its windows. Tier A = focal dev units; Tier B = ARU dev units (non-avian-ml frog clips
 + background clips). Locked (Tier C) units are never passed in during development.
 
 Uncertainty: resample split groups with replacement (recordist/site for focal, proxy
-block for CDFW, clip for background); a unit's weight is how often its group was drawn.
+block for ARU frog clips, clip for background); a unit's weight is how often its group was drawn.
 AP is computed with those weights for all resamples at once (`ap_boot`), which matches
 sklearn's average_precision_score (step-wise, ties grouped) for unit weights.
 """
@@ -173,7 +173,7 @@ def per_class_a(units: pd.DataFrame, scores: pd.DataFrame) -> pd.DataFrame:
 
 
 def per_class_b(units: pd.DataFrame, scores: pd.DataFrame) -> pd.DataFrame:
-    """ARU pool: per-class AP / recall@precision / review effort for CDFW classes; for every
+    """ARU pool: per-class AP / recall@precision / review effort for ARU classes; for every
     class, how often it fires (>= 0.5) on background and on other species' ARU clips."""
     b = tier_b(units)
     if not len(b):

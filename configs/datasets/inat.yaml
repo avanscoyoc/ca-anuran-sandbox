@@ -1,0 +1,19 @@
+name: inat
+kind: focal
+raw_dir: data/raw/focal/inat
+description: Research-grade, CC-licensed iNaturalist observation sounds (250 oldest per taxon + all observations from 2025-04-01 on).
+citation: iNaturalist contributors
+url: https://www.inaturalist.org
+license: CC (per recording; see the license column)
+redistributable: per recording
+recorder: phones / handheld
+reader: manifest
+reader_args: {source: inat, site_from: latlon}
+label_kind: weak
+exhaustive: false
+grouping: recordist (inat:<recordist>)
+caveats:
+  - Many are from outside California, especially the non-native Lithobates and ELCO.
+  - iNat lumps the Pacific chorus treefrogs, so those are group-level labels (PACH).
+  - Most predate the BirdNET training cutoff (2023-07-01), so they may be in BirdNET's training data.
+  - Site = lat/lon rounded to 0.01 degree (~1 km).

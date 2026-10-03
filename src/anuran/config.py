@@ -7,9 +7,13 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
-RAW = ROOT / "data" / "raw"
+RAW = ROOT / "data" / "raw"          # immutable, one folder per dataset, exactly as received
+FOCAL_RAW = RAW / "focal"            # scraped focal recordings (weak, recording-level labels)
+ARU_RAW = RAW / "aru"                # autonomous recorder data (clips, raw audio + boxes, noise)
 INTERIM = ROOT / "data" / "interim"
+LABELS = ROOT / "labels"             # labels we make (tracked): labels/<dataset>/...
 SPECIES_YAML = ROOT / "configs" / "species.yaml"
+DATASETS = ROOT / "configs" / "datasets"  # one data card per dataset
 
 
 def _load(path: Path = SPECIES_YAML) -> dict:

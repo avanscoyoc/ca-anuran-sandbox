@@ -1,0 +1,19 @@
+name: herps
+kind: focal
+raw_dir: data/raw/focal/herps
+description: Focal recordings and call descriptions from the californiaherps.com field guide (scraped).
+citation: Nafis, G. californiaherps.com (most recordings by G. Nafis)
+url: https://www.californiaherps.com/frogs/frogs.html
+license: all rights reserved (used for research only)
+redistributable: false
+recorder: handheld / various
+reader: manifest
+reader_args: {source: herps, site_from: county}
+label_kind: weak
+exhaustive: false
+grouping: county (herps:<label>:<county>; whole species page if no county)
+caveats:
+  - Mostly undated, and one recordist for most clips.
+  - Captions give the county at best, so sites are counties.
+  - Call text lives in data/text/species/ (copyrighted, gitignored); attributes are in configs/attribute_review.yaml.
+  - Some clips are underwater recordings (call_types contains "underwater").

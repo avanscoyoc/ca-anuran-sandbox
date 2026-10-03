@@ -14,7 +14,7 @@ one line to .claude/notes/results_log.md (tracked, survives container rebuilds).
 
 Config keys (see configs/experiments/):
   name, encoder, seeds
-  train.sources      manifest sources whose weak-pos windows are trained on (herps, inat, xc, cdfw)
+  train.sources      manifest sources whose weak-pos windows are trained on (herps, inat, xc, non_avian_ml)
   train.background   include verified ARU background windows as all-negative rows
   model.type         mlp (models/head.py) | logreg (multinomial, + a background class if used)
   model.*            mlp: epochs, d_proj, dropout, lr, weight_decay; logreg: C
@@ -69,7 +69,7 @@ def load_data(encoder: str) -> Data:
                          "source": lab["recording_id"].map(man["source"]),
                          "acoustic_class": lab["acoustic_class"], "state": lab["state"],
                          "masked_classes": lab["masked_classes"]})
-    bg = pd.DataFrame({"unit_id": bgw["clip_id"], "kind": "background", "source": "background_aru",
+    bg = pd.DataFrame({"unit_id": bgw["clip_id"], "kind": "background", "source": "non_avian_ml",
                        "acoustic_class": None, "state": "neg", "masked_classes": [[] for _ in range(len(bgw))]})
     win = pd.concat([frog, bg], ignore_index=True)
     missing = ~win["unit_id"].isin(u.index)
@@ -84,7 +84,7 @@ def load_data(encoder: str) -> Data:
     first_mask = win.groupby("unit_id")["masked_classes"].first()
     dev["masked"] = dev.index.map(first_mask)
     date = pd.to_datetime(dev.index.map(man["date"]).to_series(index=dev.index), errors="coerce")
-    # herps, CDFW and background are not in the encoders' training data; iNat/XC only after the cutoff
+    # herps and non-avian-ml clips are not in the encoders' training data; iNat/XC only after the cutoff
     dev["leakage_safe"] = ~dev["source"].isin(["inat", "xc"]) | (date >= TRAINING_CUTOFF[encoder])
     dev["medium"] = dev.index.map(man["medium"]).fillna("air")
     classes = sorted(man.loc[man["source"].isin(FOCAL), "acoustic_class"].unique())
@@ -202,7 +202,7 @@ def run(cfg: dict, n_boot: int = 500) -> Path:
              f"- config: `{json.dumps({k: cfg[k] for k in ('train', 'model', 'seeds')})}`", ""]
     lines += [f"- {k}: {_fmt(m, k)}" for k in HEADLINE]
     lines += ["", "## Tier A (focal, per recording)", "```", res["per_class_A"].round(3).to_string(), "```",
-              "", "## Tier B (ARU pool: CDFW clips + background)", "```", res["per_class_B"].round(3).to_string(), "```"]
+              "", "## Tier B (ARU pool: non-avian-ml frog clips + background)", "```", res["per_class_B"].round(3).to_string(), "```"]
     (out / "summary.md").write_text("\n".join(lines))
     print("\n".join(lines[:4 + len(HEADLINE)]))
 

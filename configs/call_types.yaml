@@ -1,0 +1,14 @@
+# Call types per acoustic class. Short definitions in our own words (no quoted text, which stays in
+# gitignored data/text/papers/). Used with box labels that carry a call_type; nothing trains on them yet.
+# pitched: yes | no | semi.  grades_into: call types that intergrade with this one.
+MYLF:
+  source: rana_sierrae_2022       # data card with the annotations
+  citation: Lapp et al., R. sierrae vocalization types (see configs/datasets/rana_sierrae_2022.yaml)
+  text: data/text/papers/lapp_rana_sierrae.txt
+  types:
+    A: {name: primary, pitched: yes, pitch_motion: very variable (rising, falling, overslurred or more complex)}
+    B: {name: stuttered, pitched: no, pulsed: yes, note: rapid amplitude modulation; the stuttered call described by Vredenburg et al.}
+    C: {name: chuck, pitched: no, duration: short, note: "sometimes doubled or tripled (double/triple chuck)"}
+    D: {name: short downward note, pitched: semi, pitch_motion: falling, duration: short, grades_into: [A]}
+    E: {name: frequency-modulated, pitched: yes, frequency_modulated: yes, grades_into: [A],
+        note: "may match the 'semipulsed' call of Ziesmer (1997); not verified"}

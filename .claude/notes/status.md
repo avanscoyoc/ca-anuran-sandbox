@@ -1,22 +1,23 @@
 # Project status
 
-_Last updated: 2026-10-01 (harness + CDFW ingestion added)_
+_Last updated: 2026-10-02 (raw layout by provenance, data cards, catalog + inventory figure)_
 
 ## What has been built (`src/anuran/`)
 
 | Step | Module | Output |
 |---|---|---|
-| Scrape californiaherps (audio + call text) | `scrape/herps.py` | `data/raw/herps/`, `data/interim/herps_recordings.parquet`, `herps_species_text.jsonl`, `data/text/species/*.txt` |
-| Scrape iNaturalist (research-grade, CC licensed; 250 oldest per taxon + a "recent" pull of observations ≥ 2025-04-01) | `scrape/inat.py` | `data/raw/inat/audio/<label>/`, `inat_recordings.parquet` |
-| Scrape xeno-canto (quality A/B, needs `$XC_API_KEY`) | `scrape/xenocanto.py` | `data/raw/xc/audio/`, `xc_recordings.parquet` |
+| Scrape californiaherps (audio + call text) | `scrape/herps.py` | `data/raw/focal/herps/`, `data/interim/herps_recordings.parquet`, `herps_species_text.jsonl`, `data/text/species/*.txt` |
+| Scrape iNaturalist (research-grade, CC licensed; 250 oldest per taxon + a "recent" pull of observations ≥ 2025-04-01) | `scrape/inat.py` | `data/raw/focal/inat/audio/<label>/`, `inat_recordings.parquet` |
+| Scrape xeno-canto (quality A/B, needs `$XC_API_KEY`) | `scrape/xenocanto.py` | `data/raw/focal/xc/audio/`, `xc_recordings.parquet` |
 | Merge, probe, dedupe, assign folds | `data/manifest.py` | `data/processed/manifest.parquet` |
-| Per-class inventory | `data/inventory.py` | stdout table |
+| Data cards → catalog + per-class inventory figure (readers: manifest, non_avian_ml, raven) | `configs/datasets/*.yaml`, `data/catalog.py` (`pixi run catalog`) | `data/processed/catalog/{recordings,spans}.parquet`, `data/results/figures/inventory.{png,csv}` |
 | Embed 3 s windows (1.5 s hop) | `features/embed_audio.py`, `features/encoders.py`, `data/windows.py` | `data/processed/embeddings/<enc>/{windows.parquet, embeddings.npy, cache/}` |
 | Weak window labels (pos / uncertain) | `data/window_labels.py` | `window_labels.parquet` |
-| Verified ARU background negatives | `notebooks/verify_background.ipynb`, `data/background.py` | `labels/background_verification.csv`, `background_{windows.parquet,embeddings.npy}` |
+| Verified ARU background negatives | `notebooks/verify_background.ipynb`, `data/background.py` | `labels/non_avian_ml/background_verification.csv`, `background_{windows.parquet,embeddings.npy}` |
 | Export windows for strong-label review | `data/export_review.py` | `data/processed/review/<enc>_windows.parquet` |
 | Extract call attributes from field-guide text | `text/attributes.py` | `data/interim/call_attributes.yaml` |
-| CDFW ARU clips as a manifest source (proxy blocks of 50 clips) | `data/cdfw.py` | `data/interim/cdfw_recordings.parquet` |
+| non-avian-ml ARU clips: per-clip table (label, site_id, date, recording_id) + frog clips as a manifest source (proxy blocks of 50) | `data/non_avian_ml.py` (`pixi run non-avian-ml`) | `data/interim/non_avian_ml_clips.csv`, `non_avian_ml_recordings.parquet` |
+| Range maps (CWHR; USGS GAP for PSHY) → per-site prior for inference (`logit + log w`; groups = union of members; unmapped → w = 1) + coverage/calibration check (2026-10-02/03) | `configs/ranges.yaml`, `data/ranges.py` (`pixi run ranges`) | `data/raw/range/{cwhr/<dsN>.geojson, gap/<code>_CONUS_Range_2001v1.{zip,xml}}`, `data/processed/ranges.parquet`, `data/results/ranges/range_check.csv` |
 | Frozen eval splits (Tier A focal / B ARU / C locked), hash-checked | `eval/splits.py` | `data/processed/splits.{parquet,sha256}` |
 | Metrics + group bootstrap CIs + paired comparison | `eval/metrics.py` | – |
 | Config-driven experiments + registry | `experiment.py`, `configs/experiments/*.yaml` | `data/results/runs/<name>/`, `runs.csv`, `.claude/notes/results_log.md` |
@@ -41,7 +42,7 @@ _Last updated: 2026-10-01 (harness + CDFW ingestion added)_
 ## Encoders
 | Encoder | Input | Embedding | Status |
 |---|---|---|---|
-| BirdNET v2.4 (TFLite, `GLOBAL_AVG_POOL`) | 3 s @ 48 kHz | 1024-d | 41,419 frog windows (39,129 focal + 2,290 CDFW) + 639 background windows embedded |
+| BirdNET v2.4 (TFLite, `GLOBAL_AVG_POOL`) | 3 s @ 48 kHz | 1024-d | 41,419 frog windows (39,129 focal + 2,290 non-avian-ml) + 639 background windows embedded |
 | Perch v2 (Kaggle `perch_v2_cpu`) | 5 s @ 32 kHz | 1536-d | **Incomplete**: 306 windows only |
 
 BirdNET already knows 6 of our classes (ANMI, ANCO, ANWO, ANCN, SCCO, LICA), so its zero-shot logits for them are stored as `zs_*`. Perch knows 23.

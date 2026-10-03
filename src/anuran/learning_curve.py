@@ -1,16 +1,16 @@
 """Learning curve: how many ARU clips (and from how many proxy sites) does a species need?
 
-For the CDFW species (ANWO, LICA, PACH, RABO): for each CDFW dev fold k and repeat r,
+For the ARU species (ANWO, LICA, PACH, RABO): for each ARU dev fold k and repeat r,
 train the experiment model on all focal + background training data outside fold k, plus
-a subsample of the CDFW clips outside fold k: `clips` clips per species drawn from `groups`
+a subsample of the ARU frog clips outside fold k: `clips` clips per species drawn from `groups`
 proxy blocks per species (0 clips = focal + background only, the E1 setting). Score the
-ARU pool of fold k (CDFW clips + background) and record per-species AP, recall at
+ARU pool of fold k (ARU frog clips + background) and record per-species AP, recall at
 precision 0.9, and any-frog detection AP.
 
   python -m anuran.learning_curve configs/experiments/e0_focal_bg.yaml --repeats 2
 
 Outputs: data/results/learning_curve/{lc.parquet, summary.md}. Proxy blocks are 50
-contiguous clips (data/cdfw.py), so `groups` approximates sites/nights, not exactly.
+contiguous clips (data/non_avian_ml.py), so `groups` approximates sites/nights, not exactly.
 """
 
 from __future__ import annotations
@@ -24,7 +24,7 @@ import pandas as pd
 import yaml
 
 from anuran.config import ROOT
-from anuran.data.cdfw import BLOCK
+from anuran.data.non_avian_ml import BLOCK, SOURCE
 from anuran.eval import metrics
 from anuran.experiment import NOTES_LOG, cross_validate, load_data
 
@@ -46,7 +46,7 @@ def grid() -> list[tuple[int, int | None, int | None]]:
 
 
 def sample(win: pd.DataFrame, pool: np.ndarray, clips: int | None, groups: int | None, rng) -> np.ndarray:
-    """Boolean mask over windows: the CDFW training clips for this point of the curve."""
+    """Boolean mask over windows: the ARU frog training clips for this point of the curve."""
     keep = np.zeros(len(win), bool)
     sub = win[pool]
     for _, cls_rows in sub.groupby("acoustic_class"):
@@ -61,11 +61,11 @@ def sample(win: pd.DataFrame, pool: np.ndarray, clips: int | None, groups: int |
 
 def run(cfg: dict, repeats: int, seed: int = 0) -> pd.DataFrame:
     cfg = {**cfg, "seeds": cfg.get("seeds", [0])[:1]}
-    cfg["train"] = {**cfg["train"], "sources": sorted(set(cfg["train"]["sources"]) | {"cdfw"})}
+    cfg["train"] = {**cfg["train"], "sources": sorted(set(cfg["train"]["sources"]) | {SOURCE})}
     data = load_data(cfg["encoder"])
     w = data.win.copy()
     w["split_group"] = w["unit_id"].map(data.units["split_group"])
-    cdfw = (w["source"] == "cdfw").values & ~w["locked"].values
+    aru_frog = ((w["source"] == SOURCE) & (w["kind"] == "frog")).values & ~w["locked"].values
     units = data.units
     aru = metrics.tier_b(units)
     classes = metrics.classes_b(units)
@@ -76,12 +76,12 @@ def run(cfg: dict, repeats: int, seed: int = 0) -> pd.DataFrame:
     for r in range(repeats):
         rng = np.random.default_rng([seed, r])
         for k in folds:
-            pool = cdfw & (w["fold"] != k).values
+            pool = aru_frog & (w["fold"] != k).values
             for pid, clips, groups in points:
                 if r > 0 and clips == 0 and groups == 0:
                     continue  # no sampling involved: identical across repeats
                 chosen = sample(w, pool, clips, groups, rng) if clips != 0 else np.zeros(len(w), bool)
-                allow = ~cdfw | chosen
+                allow = ~aru_frog | chosen
                 scores = cross_validate(data, cfg, allow=allow, folds=[k], log=lambda *_: None)
                 test = aru[aru["fold"] == k]
                 s = scores.loc[test.index]
@@ -121,7 +121,7 @@ def write_summary(df: pd.DataFrame, cfg: dict) -> str:
     macro = macro.join(spread, on="point").reset_index().sort_values("point")
     wide = per["AP"].unstack("class").reset_index().sort_values("point").drop(columns="point")
     ntr = per["n"].unstack("class").reset_index().sort_values("point").drop(columns="point")
-    lines = ["# ARU learning curve (CDFW species, proxy-grouped)",
+    lines = ["# ARU learning curve (non-avian-ml species, proxy-grouped)",
              f"model: `{yaml.safe_dump(cfg['model'], default_flow_style=True).strip()}`, train sources {cfg['train']['sources']} "
              f"+ background; per-species clips sampled from `groups` proxy blocks (50 contiguous clips) outside the test fold",
              "", "## Macro over ANWO/LICA/PACH/RABO (mean over folds x repeats; sd across fold-repeats)", "```",
@@ -144,7 +144,7 @@ def main() -> None:
     full = df[(df["clips"] == -1) & (df["groups"] == -1)]["AP"].mean()
     zero = df[df["clips"] == 0]["AP"].mean()
     with NOTES_LOG.open("a") as f:
-        f.write(f"| learning curve | ARU macro AP with 0 CDFW clips {zero:.3f} -> all clips {full:.3f}; "
+        f.write(f"| learning curve | ARU macro AP with 0 ARU frog clips {zero:.3f} -> all clips {full:.3f}; "
                 f"see data/results/learning_curve/summary.md |\n")
 
 

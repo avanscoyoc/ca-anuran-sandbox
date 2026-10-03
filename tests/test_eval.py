@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 from sklearn.metrics import average_precision_score
 
-from anuran.data.cdfw import proxy_blocks
+from anuran.data.non_avian_ml import proxy_blocks
 from anuran.eval import metrics, splits
 
 
@@ -86,13 +86,13 @@ def test_proxy_blocks_are_contiguous_runs():
     assert b.tolist() == [2, 0, 1, 1, 2, 0]
 
 
-def test_cdfw_folds_contiguous_and_last_blocks_locked():
+def test_aru_folds_contiguous_and_last_blocks_locked():
     man = pd.DataFrame({
-        "recording_id": [f"c{i}" for i in range(100)], "source": "cdfw", "acoustic_class": "RABO",
-        "split_group": [f"cdfw:RABO:b{i // 10:02d}" for i in range(100)],
+        "recording_id": [f"c{i}" for i in range(100)], "source": "non_avian_ml", "acoustic_class": "RABO",
+        "split_group": [f"non_avian_ml:RABO:b{i // 10:02d}" for i in range(100)],
     })
-    c = splits.cdfw_units(man, n_folds=5, lock_frac=0.2)
-    assert c.loc[c["locked"], "split_group"].unique().tolist() == ["cdfw:RABO:b08", "cdfw:RABO:b09"]
+    c = splits.aru_units(man, n_folds=5, lock_frac=0.2)
+    assert c.loc[c["locked"], "split_group"].unique().tolist() == ["non_avian_ml:RABO:b08", "non_avian_ml:RABO:b09"]
     assert (c.loc[c["locked"], "fold"] == -1).all()
     dev = c[~c["locked"]]
     assert dev["fold"].is_monotonic_increasing and set(dev["fold"]) == set(range(5))
@@ -116,10 +116,10 @@ def test_locked_units_never_train():
     from anuran.experiment import Data, train_mask
 
     win = pd.DataFrame({"unit_id": ["a", "b", "c", "d"], "kind": ["frog", "frog", "background", "background"],
-                        "source": ["inat", "cdfw", "background_aru", "background_aru"],
+                        "source": ["inat", "non_avian_ml", "non_avian_ml", "non_avian_ml"],
                         "acoustic_class": ["X", "X", None, None], "state": ["pos", "pos", "neg", "neg"],
                         "masked_classes": [[], [], [], []], "fold": [0, -1, 1, -1],
                         "locked": [False, True, False, True]})
     data = Data(np.zeros((4, 2)), win, pd.DataFrame(), ["X"], "h", "birdnet_v24")
-    cfg = {"train": {"sources": ["inat", "cdfw"], "background": True}}
+    cfg = {"train": {"sources": ["inat", "non_avian_ml"], "background": True}}
     assert train_mask(data, cfg).tolist() == [True, False, True, False]

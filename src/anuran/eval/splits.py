@@ -5,11 +5,11 @@
 
 Units: frog recordings (manifest) and verified background clips.
   domain "focal"  herps/iNat/XC recordings (Tier A). Folds = the manifest's recordist/site folds.
-  domain "aru"    CDFW clips + ARU background (Tier B). CDFW folds are contiguous runs of
-                  proxy blocks (data/cdfw.py) so neighbouring clips rarely straddle folds;
+  domain "aru"    non-avian-ml frog clips + background (Tier B). Frog folds are contiguous runs of
+                  proxy blocks (data/non_avian_ml.py) so neighbouring clips rarely straddle folds;
                   background keeps its category-stratified folds (data/background.py).
 locked (Tier C, final test only; never trained on or scored during development):
-  - the last LOCK_FRAC of each CDFW species' blocks (contiguous, so one boundary)
+  - the last LOCK_FRAC of each ARU species' blocks (contiguous, so one boundary)
   - LOCK_FRAC of background clips, stratified by category
   - focal: for classes with >= RARE_MAX recordings only, single-class split groups whose
     recordings are all observed >= LOCK_AFTER (leakage-safe for BirdNET and Perch), up to
@@ -36,9 +36,9 @@ RARE_MAX = 30  # same rare/common cut as train_baseline
 COLUMNS = ["unit_id", "kind", "source", "acoustic_class", "split_group", "domain", "fold", "locked"]
 
 
-def cdfw_units(man: pd.DataFrame, n_folds: int = N_FOLDS, lock_frac: float = LOCK_FRAC) -> pd.DataFrame:
+def aru_units(man: pd.DataFrame, n_folds: int = N_FOLDS, lock_frac: float = LOCK_FRAC) -> pd.DataFrame:
     """Contiguous folds over each species' proxy blocks; the last blocks are locked."""
-    c = man[man["source"] == "cdfw"].copy()
+    c = man[man["source"] == "non_avian_ml"].copy()
     c["fold"], c["locked"] = -1, False
     for _, idx in c.groupby("acoustic_class").groups.items():
         blocks = sorted(c.loc[idx, "split_group"].unique())  # zero-padded block numbers sort in order
@@ -84,14 +84,14 @@ def background_units(seed: int = 0, lock_frac: float = LOCK_FRAC) -> pd.DataFram
         n_lock = int(round(lock_frac * len(idx)))
         bg.loc[rng.choice(idx, n_lock, replace=False), "locked"] = True
     return pd.DataFrame({
-        "unit_id": bg["clip_id"], "kind": "background", "source": "background_aru", "acoustic_class": None,
+        "unit_id": bg["clip_id"], "kind": "background", "source": "non_avian_ml", "acoustic_class": None,
         "split_group": "bg:" + bg["clip_id"], "domain": "aru", "fold": bg["fold"], "locked": bg["locked"],
     })
 
 
 def build(seed: int = 0) -> pd.DataFrame:
     man = pd.read_parquet(PROCESSED / "manifest.parquet")
-    frogs = pd.concat([focal_units(man, seed), cdfw_units(man)]).rename(columns={"recording_id": "unit_id"})
+    frogs = pd.concat([focal_units(man, seed), aru_units(man)]).rename(columns={"recording_id": "unit_id"})
     units = pd.concat([frogs[COLUMNS], background_units(seed)], ignore_index=True)
     units["fold"] = units["fold"].astype(int)
     units["locked"] = units["locked"].astype(bool)

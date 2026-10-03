@@ -6,7 +6,7 @@ Keeps quality A/B by default. Names are matched with genus synonyms
 subspecies map to their acoustic group, as in the iNat scraper.
 
 Outputs:
-  data/raw/xc/audio/<label>/XC<id>.<ext>
+  data/raw/focal/xc/audio/<label>/XC<id>.<ext>
   data/interim/xc_recordings.parquet
 """
 
@@ -18,7 +18,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from anuran.config import INTERIM, RAW, ROOT, vocal_species
+from anuran.config import FOCAL_RAW, INTERIM, ROOT, vocal_species
 from anuran.scrape.fetch import Fetcher
 
 API = "https://xeno-canto.org/api/3/recordings"
@@ -105,7 +105,7 @@ def scrape(key: str, qualities: set[str], delay: float, download: bool = True) -
         return df
     paths = []
     for r in df.itertuples():
-        dest = RAW / "xc" / "audio" / r.label / f"XC{r.source_id}{r.ext}"
+        dest = FOCAL_RAW / "xc" / "audio" / r.label / f"XC{r.source_id}{r.ext}"
         ok = bool(r.url) and (fetch.file(r.url, dest) if download else dest.exists())
         paths.append(str(dest.relative_to(ROOT)) if ok else None)
     df["path"] = paths

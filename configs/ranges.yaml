@@ -1,0 +1,63 @@
+# Species range maps: a geographic prior applied at inference only, never a training input (decisions.md 2026-10-02).
+# `pixi run ranges` downloads each map once to raw_dir, builds data/processed/ranges.parquet and writes the coverage and
+# calibration check (data/results/ranges/range_check.csv). Code: src/anuran/data/ranges.py.
+# Range only, never habitat suitability ("Predicted Habitat" / GAP "Habitat Map"); enforced in ranges.py.
+sources:
+  cwhr:   # default: a plain string in `ranges` is a CNRA package name
+    source: California Wildlife Habitat Relationships (CWHR) range maps, CDFW BIOS
+    url: https://www.wildlife.ca.gov/Data/CWHR
+    catalog: https://data.cnra.ca.gov/dataset/   # + package name; the GeoJSON resource is downloaded (WGS84)
+    license: CC-BY (Creative Commons Attribution)
+    citation: "California Department of Fish and Wildlife, California Wildlife Habitat Relationships Program. <Species> Range - CWHR <id> [ds<N>]."
+    raw_dir: data/raw/range/cwhr      # <dsN>.geojson, exactly as downloaded
+  gap:    # `{gap: <ScienceBase item id>}` in `ranges`; only for species CWHR doesn't map
+    source: USGS Gap Analysis Project (GAP) species range maps, CONUS 2001 v1 (HUC12 sub-watersheds, dissolved)
+    url: https://www.sciencebase.gov/catalog/item/   # + item id; the zip (shapefile + HUC12 CSV) and FGDC xml are downloaded
+    license: public domain (USGS data release)
+    citation: "U.S. Geological Survey (USGS) - Gap Analysis Project (GAP), 2018, <Species> <code>_CONUS_2001v1 Range Map: U.S. Geological Survey data release, <doi>."
+    raw_dir: data/raw/range/gap       # <code>_CONUS_Range_2001v1.{zip,xml}, exactly as downloaded
+
+# score adjustment: logit + log(w); w = 1 inside the range, exp(-d / scale_km) outside, never below floor.
+# Provisional values; set them from range_check.csv and Tier B (E7).
+prior: {scale_km: 20, floor: 0.02}
+
+# species code (configs/species.yaml) -> map. Acoustic groups use the union of their members' ranges.
+ranges:
+  ANCA: arroyo-toad-range-cwhr-a035-ds612
+  ANEX: black-toad-range-cwhr-a031-ds1159
+  ANBB: western-toad-range-cwhr-a032-ds1160          # species-level map: WETO can't be split by range
+  ANBH: western-toad-range-cwhr-a032-ds1160
+  ANCO: great-plains-toad-range-cwhr-a037-ds1164
+  ANPU: red-spotted-toad-range-cwhr-a036-ds1163
+  ANWO: woodhouses-toad-range-cwhr-a034-ds1162
+  INAL: sonoran-desert-toad-range-cwhr-a030-ds1158
+  ANCN: yosemite-toad-range-cwhr-a033-ds1161
+  RADR: california-red-legged-frog-range-cwhr-a071-ds587
+  RACA: cascades-frog-range-cwhr-a042-ds591
+  RALU: columbia-spotted-frog-range-cwhr-a078-ds1188
+  RABO: foothill-yellow-legged-frog-range-cwhr-a043-ds589   # whole species; per-DPS maps (A043a-f) exist
+  RASI: sierra-nevada-yellow-legged-frog-range-cwhr-a070-ds592
+  LIPI: northern-leopard-frog-range-cwhr-a045-ds593
+  RAAU: northern-red-legged-frog-range-cwhr-a040-ds894
+  RAPR: oregon-spotted-frog-range-cwhr-a041-ds597
+  RAMU: southern-mountain-yellow-legged-frog-range-cwhr-a044-ds6131   # whole species; N/S CA DPS maps exist
+  PSCA: california-treefrog-range-cwhr-a038-ds1165
+  PSRE: pacific-treefrog-range-cwhr-a039-ds1166      # P. regilla in the strict sense: far NW California only
+  PSSI: sierran-treefrog-range-cwhr-a077-ds1187
+  SCCO: couchs-spadefoot-range-cwhr-a027-ds1156
+  SPIN: great-basin-spadefoot-range-cwhr-a029-ds1157
+  SPHA: western-spadefoot-range-cwhr-a028-ds590
+  LICA: bullfrog-range-cwhr-a046-ds895
+  LIBE: rio-grande-leopard-frog-range-cwhr-a050-ds1169
+  PSHY: {gap: 59f5e1b7e4b063d5d307da87}               # aBCTRx, doi:10.5066/F7ST7P0Z; all HUC12s Known/extant, native, year-round
+
+# vocal species with no range map (CWHR searched on data.cnra.ca.gov 2026-10-02). They get w = 1 everywhere, and so
+# does any acoustic group with an unmapped member.
+unmapped: [ANMI, LIYA, XELA, ELCO, LISP]
+
+caveats:
+  - GAP maps (PSHY) are not clipped at the state line (PSHY's reaches NV/AZ, HUC regions 15-16) and are built from HUC12 sub-watersheds, so their edges are coarser than CWHR's. Only distances from California sites are used.
+  - Each CWHR map is one polygon per species of the "maximum, current geographic extent" in California, clipped at the state line. Distances to the range are only meaningful for sites in California.
+  - Maps are coarse and many date from about 2016. They miss translocations (e.g. R. sierrae reintroductions) and spreading non-natives (bullfrog), which is why the prior has a floor and is never 0.
+  - Season is year-round in every map checked, so there is no seasonal component.
+  - iNat coordinates of sensitive species can be obscured by up to ~20 km and the scraper didn't keep the flag, so the iNat calibration check overstates distances outside the range for those species.

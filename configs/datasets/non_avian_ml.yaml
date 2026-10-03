@@ -1,0 +1,38 @@
+name: non_avian_ml
+kind: aru
+raw_dir: data/raw/aru/non_avian_ml
+description: >-
+  3 s clips cut from ARU recordings and annotated in the non-avian-ml project: one folder per frog species
+  (ANWO, LICA, PSRE, RABO) and background_no_frog (noise categories: wind, generator, crickets, ...).
+  all_3s_clips.csv is the project's clip sheet (6,547 clips; this folder holds 2,935 of them).
+citation: non-avian-ml project (A. Van Scoyoc et al.)
+url: https://github.com/avanscoyoc/non-avian-ml
+license: non-avian-ml project data (not redistributable)
+redistributable: false
+recorder: various ARUs. Mojave recorders (BD-xxxxx) for ANWO/LICA/PACH; RABO calls only underwater, so its recorders (yellow-legged-frog-1/-4) are underwater.
+schedule: per source recording; see all_3s_clips.csv
+files:
+  sheet: all_3s_clips.csv          # project clip sheet: common_name, start/end_time (call), source_audio_path, start/end_time_3s (clip), ID, filename
+  verification: labels/non_avian_ml/background_verification.csv   # our by-ear review of background_no_frog
+ingest: pixi run non-avian-ml      # src/anuran/data/non_avian_ml.py
+outputs:
+  clips: data/interim/non_avian_ml_clips.csv                  # THE per-clip table: clip_id, file, kind, label, code, site_id, date, recording_id, source_audio_path, clip/call offsets, sample_rate, use
+  manifest_source: data/interim/non_avian_ml_recordings.parquet   # frog clips in manifest format (source non_avian_ml)
+reader: non_avian_ml               # catalog reads outputs.clips; rows with use != yes are skipped
+min_sample_rate: 32000             # six 24 kHz background clips get use=low_sample_rate (would be a sample-rate shortcut)
+label_kind: clip                   # frog folders; background_no_frog clips are `negative` (set per recording by the reader)
+exhaustive: false
+labels:                            # sheet common_name -> species (= the folder name)
+  woodhouses_toad: {species: ANWO}
+  american_bullfrog: {species: LICA}
+  pacific_chorus_frog: {species: PSRE}   # -> PACH group
+  yellow_legged_frog: {species: RABO}
+grouping: site_day                 # sites/dates parsed from source_audio_path; the manifest still uses proxy blocks (see caveats)
+caveats:
+  - "site_id, date and recording_id are parsed from source_audio_path (user rules, 2026-10-02). site_id = the recorder folder (BD-33452B, yellow-legged-frog-1) or the name prefix (UOLD4; Windmill_R13_Sound_WCenterA). recording_id = the source recording's YYYYMMDD_HHMMSS start (20211013_065000), or <folder>_<stem> (nutria_clip_1) when the name has no datetime. In the manifest and catalog, recording_id means the clip, and the source recording is `source_recording`."
+  - "Frog clips come from few sites: ANWO, LICA and PACH from Mojave BD-* recorders (May 2023); RABO from yellow-legged-frog-1/-4 (March 2026). The manifest/splits still use 50-clip proxy blocks; switching to these real sites needs splits --force and re-runs."
+  - Clips can overlap within one source recording (several 3 s windows around one call), so count site-nights, not clips.
+  - "Background clips were reviewed by ear (labels/non_avian_ml/background_verification.csv, notebooks/verify_background.ipynb): 42 had frogs and are dropped. File names are <folder category>_<sheet filename>; the clip ID is the last number."
+  - Nutria clips have no site or date.
+  - "Clip ids: non_avian_ml_<CODE>_<ID> for frogs, the file stem for background. Until the next rebuild (embed, weak-labels, splits --force), the stored manifest/embeddings/splits still use the old names cdfw_<CODE>_<ID> and source cdfw/background_aru."
+  - RABO clips are 32 kHz; the other frog clips are 48 kHz.

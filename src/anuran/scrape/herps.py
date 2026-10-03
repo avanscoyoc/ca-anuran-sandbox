@@ -5,8 +5,8 @@ Scraped audio lives under data/ (gitignored) and must not be redistributed.
 robots.txt asks for Crawl-delay: 10, which CRAWL_DELAY honours.
 
 Outputs:
-  data/raw/herps/html/<page>.html          cached pages
-  data/raw/herps/audio/<code>/<file>.mp3   recordings
+  data/raw/focal/herps/html/<page>.html          cached pages
+  data/raw/focal/herps/audio/<code>/<file>.mp3   recordings
   data/interim/herps_recordings.parquet    one row per recording
   data/interim/herps_species_text.jsonl    description text per species
 """
@@ -25,13 +25,13 @@ import yaml
 from bs4 import BeautifulSoup
 
 from anuran.config import INTERIM, ROOT, load_species
-from anuran.config import RAW as RAW_ROOT
+from anuran.config import FOCAL_RAW
 from anuran.scrape.fetch import Fetcher
 
 BASE = "https://www.californiaherps.com/"
 PAGES = urljoin(BASE, "frogs/pages/")
 CRAWL_DELAY = 10.0
-RAW = RAW_ROOT / "herps"
+RAW = FOCAL_RAW / "herps"
 
 CALL_SECTION = re.compile(r"^\s*[A-Z][\w'() -]{0,40}\s(?:Calls?|Sounds|Vocalizations)\s*$")
 CALL_TYPES = ("advertisement", "release", "chorus", "distress", "territorial", "encounter", "aggressive", "underwater")
@@ -42,7 +42,7 @@ def load_overrides(path: Path = ROOT / "configs" / "label_overrides.yaml") -> di
 
 
 def fetch_page(fetch: Fetcher, url: str) -> str | None:
-    """Pages are cached under data/raw/herps/html (a 404 is cached as "404")."""
+    """Pages are cached under data/raw/focal/herps/html (a 404 is cached as "404")."""
     cache = RAW / "html" / Path(urlparse(url).path).name
     if not cache.exists():
         cache.parent.mkdir(parents=True, exist_ok=True)

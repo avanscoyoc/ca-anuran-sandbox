@@ -1,0 +1,39 @@
+name: rana_sierrae_2022
+kind: aru
+raw_dir: data/raw/aru/rana_sierrae_2022
+description: >-
+  Underwater soundscape recordings at one Sierra Nevada lake, exhaustively annotated in Raven for
+  Rana sierrae call types A-E. First 10 s of every recording from one device, 2022-06-20..26.
+citation: Lapp, S. et al. Rana sierrae vocalization types (manuscript referenced in the dataset README); dataset rana_sierrae_2022 v1.0 (Dryad), README by Sam Lapp 2023-03-22
+url: https://github.com/kitzeslab/rana-sierrae-cnn
+license: CC0 (Dryad default; verify on the Dryad page)
+redistributable: true
+recorder: AudioMoth 1.2.0 in an underwater case
+schedule: 1 min every 15 min, 24 h/day, 2022-06-20 to 2022-06-26; dataset keeps the first 10 s of each (672 files)
+sites:
+  - {site_id: rs22_dev3, device_id: MSD-0558, place: "north corner of the lake (device 3 in the paper; highest activity)", lat: null, lon: null}
+reader: raven
+reader_args:
+  audio_glob: mp3/*.mp3
+  table: raven_selection_tables/{stem}.Table.1.selections.txt
+  label_column: annotation
+  filename: '^sine2022a_(?P<device>MSD-\d+)_(?P<date>\d{8})_(?P<time>\d{6})_'
+label_kind: box
+exhaustive: true              # every audible + visible R. sierrae call was boxed
+labels:
+  A: {species: RASI, call_type: A}
+  B: {species: RASI, call_type: B}
+  C: {species: RASI, call_type: C}
+  D: {species: RASI, call_type: D}
+  E: {species: RASI, call_type: E}
+  X: drop                     # README: "could not determine if R. sierrae"; user 2026-10-02: treat as no call
+window_rule: {min_overlap_s: 0.2, min_box_frac: 0.5}   # same rule the authors used for labels_2s.csv
+grouping: site_day            # one site, so groups are days; the last day (2022-06-26) is the held-out test day
+caveats:
+  - One device at one lake for one week, so results on it are within-site (new day, not new site).
+  - "32 kHz mono mp3 at 48 kbps (lossy). The non-avian-ml RABO clips are also 32 kHz."
+  - "Annotated by Sam Lapp in Raven Pro (headphones + spectrogram). Calls closer than 1 s share one box, so boxes can span several calls."
+  - "Stridulation from aquatic insects (probably Corixidae) is common: an in-file hard negative."
+  - "X boxes (129; only 3 overlap a real call) are treated as no call (user decision), so X-only files are negatives."
+  - "labels_2s.csv (2 s windows, 0.5 s hop) is the authors' derived table; we recompute windows from the Raven boxes."
+  - Call-type definitions are in configs/call_types.yaml; the paper's verbatim text is in data/text/papers/lapp_rana_sierrae.txt.

@@ -1,11 +1,11 @@
 # How much ARU data we need, and what to ask for
 
-_Last updated: 2026-10-01._
+_Last updated: 2026-10-02._
 
 **Use case** (user, 2026-10-01): (1) species presence per site/night and (2) screening clips for human review.
 
 ## Count site-nights, not clips
-Clips from the same recorder and night are near-duplicates: same noise floor, same chorus, often the same individual frogs. In our CDFW clips, the noise fingerprints of adjacent clip numbers are far more similar than random pairs, and the similarity fades over about 20–100 clips. So 600 clips from 2 sites carry about the information of a few dozen independent clips. Use the numbers below per **independent site-night**, and cap any one site-night at about 10–20 clips.
+Clips from the same recorder and night are near-duplicates: same noise floor, same chorus, often the same individual frogs. In our non-avian-ml clips, the noise fingerprints of adjacent clip numbers are far more similar than random pairs, and the similarity fades over about 20–100 clips. So 600 clips from 2 sites carry about the information of a few dozen independent clips. Use the numbers below per **independent site-night**, and cap any one site-night at about 10–20 clips.
 
 ## Testing (sets the floor, per species)
 - **Positives:** ≥ 20–30 site-nights with the species calling, from ≥ 5 sites. About 60 independent positives gives roughly ±10% on a recall of 0.8.
@@ -21,7 +21,7 @@ Clips from the same recorder and night are near-duplicates: same noise floor, sa
 - **The measured answer** comes from `pixi run learning-curve`: AP vs number of ARU clips and proxy sites for ANWO/LICA/PACH/RABO, in `data/results/learning_curve/summary.md`. Where the curve flattens becomes the target for the other species. Record the result here when it's done.
 
 ## Learning-curve result (2026-10-01, proxy-grouped)
-5 test folds × 2 repeats, ARU pool = CDFW clips + background, macro over ANWO/LICA/PACH/RABO:
+5 test folds × 2 repeats, ARU pool = non-avian-ml frog clips + background, macro over ANWO/LICA/PACH/RABO:
 - **0 ARU clips:** AP 0.846, recall at precision 0.9 = 0.64. RABO is worst at 0.645.
 - **5 clips from 1 block:** AP 0.964, recall at P0.9 = 0.89. RABO jumps to 1.00.
 - **25 clips from 3 blocks:** AP 0.986, recall at P0.9 = 0.97. This is about the plateau.
@@ -36,20 +36,21 @@ Clips from the same recorder and night are near-duplicates: same noise floor, sa
 
 | Priority | Species | Why |
 |---|---|---|
-| 1 | RADR, RAAU, ANCA, MYLF (RASI/RAMU), SPHA, PSCA, WETO, RACA, ANCN | CA natives of management interest; ≤ 65 focal recordings, several from one site; no ARU data |
+| 1 | RADR, RAAU, ANCA, MYLF (RASI/RAMU), SPHA, PSCA, WETO, RACA, ANCN | CA natives of management interest; ≤ 65 focal recordings, several from one site; no ARU data. **MYLF now has rana_sierrae_2022 (434 positive 10 s files, but 1 site / 7 days): it still needs ≥ 4 more sites** |
 | 2 | SCCO, SPIN, ANPU, ANCO, RAPR, RALU, ANEX | Desert/peripheral natives; RAPR/RALU/ANEX are tiny and single-site |
 | 3 | LIPI, LIBE, LISP | Non-natives; focal data is mostly out-of-state iNat, so we need CA ARU data from near known populations |
-| More sites | ANWO, LICA, PACH, RABO | Have CDFW clips, but from unknown and probably few sites |
-| Needs a hydrophone | XELA | Calls underwater; air ARUs won't help |
+| More sites | ANWO, LICA, PACH, RABO | Have non-avian-ml clips, but from only 2–5 sites each (ANWO 3, LICA 2, PACH 5, RABO 2; known since 2026-10-02) |
+| Needs an underwater recorder | XELA | Calls underwater (as do RABO, MYLF and RADR/RAAU, whose ARUs are underwater anyway) |
 | Can't validate | ANMI, LIYA, INAL | Possibly extirpated in CA. Keep them in the model, flagged "no test data" |
 
-## Checklist for CDFW (or any ARU partner)
+## Checklist for any ARU partner
 - [ ] Site ID, recorder ID, lat/lon, deployment start/end, and recording start time for every file.
-- [ ] Which site/date each of the 2,290 existing clips came from. This turns the proxy blocks into real groups and makes the current Tier B numbers trustworthy.
+- [x] Which site/date each of the 2,290 existing clips came from (2026-10-02: from `all_3s_clips.csv`; 2–5 sites per species). Next: replace the proxy blocks with real site groups in the manifest/splits.
 - [ ] Full-night recordings (or at least whole hours) for some site-nights, including nights with no frogs.
 - [ ] How the clips were chosen (detector output? manual browsing?). This tells us how biased a test set they are.
 - [ ] Recorder model and sample rate per deployment. RABO clips are 32 kHz and everything else is 48 kHz; is that a different recorder model or different settings?
 - [ ] Which species were *checked for and absent* at each site (true absences).
+- [ ] Enough to fill a data card (`configs/datasets/README.md`): citation/license, recorder and schedule, sites/devices with lat/lon, the annotation format and whether every call was annotated (`exhaustive`), and what each label code means.
 
 ## Class separability (2026-10-01)
 Figure: `data/results/figures/tsne_by_class.png`; table: `data/results/figures/separability.csv`.
@@ -58,7 +59,7 @@ Figure: `data/results/figures/tsne_by_class.png`; table: `data/results/figures/s
   - Mid-range confusions: SPIN↔SPHA (0.33/0.43), RAAU↔RADR (0.34/0.21), LIBE↔LISP (0.47/0.51).
   - Best separated: ELCO 0.94, SCCO 0.82, PACH 0.81, LIPI 0.78.
   - Caveat: classes with fewer than ~10 recordings score low partly because few same-class neighbours exist from other sites.
-- **ARU clips sit apart from focal clips.** The CDFW clips form their own clusters, away from the same species' focal recordings, for all 4 species. This is the domain shift, made visible. It is why ARU clips per species matter more than more focal data.
+- **ARU clips sit apart from focal clips.** The ARU clips form their own clusters, away from the same species' focal recordings, for all 4 species. This is the domain shift, made visible. It is why ARU clips per species matter more than more focal data.
 - **Resulting data priority:**
   1. Natives that are both rare and poorly separated: RADR/RAAU, MYLF (vs RABO), ANCA, RACA, ANCN, RAPR/RALU.
   2. The confusable spadefoots SPHA/SPIN.

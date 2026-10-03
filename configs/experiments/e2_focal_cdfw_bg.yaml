@@ -1,9 +1,9 @@
-# E2: E0 + CDFW ARU clips in training (cross-fitted: fold k's clips are never trained on when scoring fold k).
+# E2: E0 + non-avian-ml ARU frog clips in training (run name kept from when they were called CDFW clips) (cross-fitted: fold k's clips are never trained on when scoring fold k).
 name: e2_focal_cdfw_bg
 encoder: birdnet_v24
 seeds: [0, 1, 2]
 train:
-  sources: [herps, inat, xc, cdfw]
+  sources: [herps, inat, xc, non_avian_ml]
   background: true
 model:
   type: mlp
